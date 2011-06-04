@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <ImageView 
+        android:id="@+id/textPageBGImage"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="fitXY"
+        />
+
+    <TextView
+        android:id="@+id/textPageBGText"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        />
+
+    <ImageView
+        android:id="@+id/textPageHomeImage"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:scaleType="fitXY"
+        />
+
+    <ImageView
+        android:id="@+id/textPageMuteImage"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:scaleType="fitXY"
+        />
+
+    <TextView
+        android:id="@+id/textPageNumText"
+        android:layout_toLeftOf="@id/textPageMuteImage"
+        android:layout_alignParentTop="true"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:textColor="#000000"
+        android:textSize="15dp"
+        android:gravity="right|center_vertical"
+        />
+
+    <ImageView
+        android:id="@+id/textPageLeftImage"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:scaleType="fitXY"
+        />
+
+    <ImageView
+        android:id="@+id/textPageManualImage"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:scaleType="fitXY"
+        />
+
+    <ImageView
+        android:id="@+id/textPageRightImage"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:scaleType="fitXY"
+        />
+
+</RelativeLayout>

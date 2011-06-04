@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+    <ImageView
+        android:id="@+id/mainImageView"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:scaleType="fitXY"
+        />
+
+    <Button
+        android:id="@+id/ebookBtn"
+        android:text="@string/main_ebook"
+        android:layout_marginLeft="330dp"
+        android:layout_marginTop="130dp"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        />
+
+    <Button
+        android:id="@+id/textBtn"
+        android:text="@string/main_text"
+        android:layout_marginLeft="330dp"
+        android:layout_below="@id/ebookBtn"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        />
+
+    <Button
+        android:id="@+id/bookstoreBtn"
+        android:text="@string/main_bookstore"
+        android:layout_marginLeft="330dp"
+        android:layout_below="@id/textBtn"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        />
+
+</RelativeLayout>

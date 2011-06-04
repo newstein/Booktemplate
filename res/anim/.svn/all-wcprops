@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 44
+/svn/donga/!svn/ver/73/BookTemplate/res/anim
+END
+text_anim_up.xml
+K 25
+svn:wc:ra_dav:version-url
+V 61
+/svn/donga/!svn/ver/65/BookTemplate/res/anim/text_anim_up.xml
+END
+fade_in_out.xml
+K 25
+svn:wc:ra_dav:version-url
+V 60
+/svn/donga/!svn/ver/73/BookTemplate/res/anim/fade_in_out.xml
+END
+text_anim_down.xml
+K 25
+svn:wc:ra_dav:version-url
+V 63
+/svn/donga/!svn/ver/65/BookTemplate/res/anim/text_anim_down.xml
+END
