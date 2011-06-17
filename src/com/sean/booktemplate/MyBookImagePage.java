@@ -203,7 +203,7 @@ public class MyBookImagePage extends Activity implements OnClickListener{
 					drawMyCurrentImagePage();
 				}
 				else {
-					Toast.makeText(MyBookImagePage.this, "���̻� �������� ����ϴ�.", Toast.LENGTH_SHORT).show();
+					Toast.makeText(MyBookImagePage.this, "This is last page !!.", Toast.LENGTH_SHORT).show();
 				}
 			}
 		});
@@ -276,25 +276,24 @@ public class MyBookImagePage extends Activity implements OnClickListener{
 	    
         if (gestureDetector.onTouchEvent(event)) {
 
-            return true;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    float pos_x = event.getX();
+                    float pos_y = event.getY();
+                    for (int soundID = 1; soundID <= totalEffectNum; soundID++) {
+                        Rect rect = myPreferences.getPageEffectPosition(myCurrentPage, soundID);
+                        if (pos_x >= rect.left && pos_x <= rect.right && pos_y >= rect.top && pos_y <= rect.bottom) {
+                            mySoundPool.play(soundID, 1f, 1f, 1, 0, 1f);
+                            return true;
+                        }
+                    }
+                    initialX = event.getRawX();
+                    initialY = event.getRawY();
+                    break;
+            }
+            return super.onTouchEvent(event);
         } else {
  
-          switch (event.getAction()) {
-          case MotionEvent.ACTION_DOWN:
-              float pos_x = event.getX();
-              float pos_y = event.getY();
-              for (int soundID=1; soundID<=totalEffectNum; soundID++) {
-                  Rect rect = myPreferences.getPageEffectPosition(myCurrentPage, soundID);
-                  if (pos_x >= rect.left && pos_x <= rect.right && pos_y >= rect.top && pos_y <= rect.bottom) {
-                      mySoundPool.play(soundID, 1f, 1f, 1, 0, 1f);
-                      return true;
-                  }
-              }
-                initialX = event.getRawX();  
-                initialY = event.getRawY();  
-              break;
-        }
-    
             return false;
         }
         
@@ -386,7 +385,7 @@ public class MyBookImagePage extends Activity implements OnClickListener{
 							drawMyCurrentImagePage();
 						}
 						else {
-							Toast.makeText(MyBookImagePage.this, "���̻� �������� ����ϴ�.", Toast.LENGTH_SHORT).show();
+							Toast.makeText(MyBookImagePage.this, "this is last page", Toast.LENGTH_SHORT).show();
 						}
 					}
 				}

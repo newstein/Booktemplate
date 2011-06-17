@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import com.sean.booktemplate.R;
+import com.sean.booktemplate.MyBookImagePage.MyGestureDetector;
 
 import android.app.Activity;
 import android.content.res.AssetFileDescriptor;
@@ -13,11 +14,16 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Rect;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -37,6 +43,22 @@ public class MyBookTextPage extends Activity {
 	// �׽�Ʈ ������ ���̰� �ϱ�.
 	private boolean testIcon = false;
 	
+    private static final int SWIPE_MIN_DISTANCE = 120;
+    private static final int SWIPE_MAX_OFF_PATH = 250;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    private GestureDetector gestureDetector;
+    View.OnTouchListener gestureListener;
+ 
+    int REL_SWIPE_MIN_DISTANCE = 0;
+    int REL_SWIPE_MAX_OFF_PATH = 0;
+    int REL_SWIPE_THRESHOLD_VELOCITY = 0;     
+ 
+    private float initialX = 0;  
+    private float initialY = 0;  
+    private float deltaX = 0;  
+    private float deltaY = 0;  	
+	
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -52,6 +74,18 @@ public class MyBookTextPage extends Activity {
 
 		currentPage = 1; // 1 �������� ����.
 
+        // Gesture detection
+        gestureDetector = new GestureDetector(new MyGestureDetector());
+        gestureListener = new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                if (gestureDetector.onTouchEvent(event)) {
+                    return true;
+                }
+                return false;
+            }
+        };      
+		
+		
 		// home
 		final ImageView homeImage = (ImageView)findViewById(R.id.textPageHomeImage);
 		if (testIcon) {
@@ -149,7 +183,46 @@ public class MyBookTextPage extends Activity {
 			}
 		});
 	}
-
+    class MyGestureDetector extends SimpleOnGestureListener {
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+ 
+            DisplayMetrics dm = getResources().getDisplayMetrics();
+            REL_SWIPE_MIN_DISTANCE = (int)(SWIPE_MIN_DISTANCE * dm.densityDpi / 160.0f);
+            REL_SWIPE_MAX_OFF_PATH = (int)(SWIPE_MAX_OFF_PATH * dm.densityDpi / 160.0f);
+            REL_SWIPE_THRESHOLD_VELOCITY = (int)(SWIPE_THRESHOLD_VELOCITY * dm.densityDpi / 160.0f);    
+            
+            
+            try {
+                if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+                    return false;
+                // right to left swipe
+                if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+//                    Toast.makeText(MyBookImagePage.this, "Left Swipe", Toast.LENGTH_SHORT).show();
+                    if (currentPage < totalPageNum) {
+                        currentPage++;
+                        drawMyCurrentTextPage();
+                    }
+                    else {
+                        Toast.makeText(MyBookTextPage.this, "This Page is Last !!", Toast.LENGTH_SHORT).show();
+                    }                   
+                    
+                }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+//                    Toast.makeText(MyBookImagePage.this, "Right Swipe", Toast.LENGTH_SHORT).show();
+                    if (currentPage > 0) {
+                        currentPage--;
+                        drawMyCurrentTextPage();
+                    }
+                    else {
+                        finish();
+                    }
+                }
+            } catch (Exception e) {
+                // nothing
+            }
+            return false;
+        }
+    }
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -241,6 +314,18 @@ public class MyBookTextPage extends Activity {
 			e.printStackTrace();
 		}
 	}
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        
+        if (gestureDetector.onTouchEvent(event)) {
+
+            return true;
+        } else {
+ 
+            return false;
+        }
+        
+    }
 
 	private void drawMyBGText(String textPath) {
 		if (textPath == null) {
