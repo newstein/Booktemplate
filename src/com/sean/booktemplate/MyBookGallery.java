@@ -12,19 +12,24 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Gallery;
 import android.widget.ImageView;
+import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 
 public class MyBookGallery extends Activity {
 
-	private MyBookPrefs myPreferences = null; // å����Ÿ
-
+	private MyBookPrefs myPreferences = null; // å����Ÿ    private static final int SWIPE_MIN_DISTANCE = 120;
+	
+	
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {

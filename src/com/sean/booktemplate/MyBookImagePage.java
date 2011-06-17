@@ -21,6 +21,8 @@ import android.media.SoundPool;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.view.GestureDetector;
+import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -28,7 +30,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class MyBookImagePage extends Activity {
+public class MyBookImagePage extends Activity implements OnClickListener{
 
 	// ���� ������ ��ȣ ����.
 	public static int myCurrentPage = 0;
@@ -49,6 +51,21 @@ public class MyBookImagePage extends Activity {
 
 	// �׽�Ʈ ������ ���̰� �ϱ�.
 	private boolean testIcon = false;
+
+    private static final int SWIPE_MIN_DISTANCE = 120;
+    private static final int SWIPE_MAX_OFF_PATH = 250;
+    private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    private GestureDetector gestureDetector;
+    View.OnTouchListener gestureListener;
+ 
+    int REL_SWIPE_MIN_DISTANCE = 0;
+    int REL_SWIPE_MAX_OFF_PATH = 0;
+    int REL_SWIPE_THRESHOLD_VELOCITY = 0;     
+ 
+    private float initialX = 0;  
+    private float initialY = 0;  
+    private float deltaX = 0;  
+    private float deltaY = 0;  
 	
 	/** Called when the activity is first created. */
 	@Override
@@ -66,6 +83,18 @@ public class MyBookImagePage extends Activity {
 
 		myCurrentPage = 0; // ��Ʈ�� �������� ����.
 
+        // Gesture detection
+        gestureDetector = new GestureDetector(new MyGestureDetector());
+        gestureListener = new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                if (gestureDetector.onTouchEvent(event)) {
+                    return true;
+                }
+                return false;
+            }
+        };      
+		
+		
 		// home
 		final ImageView homeImage = (ImageView)findViewById(R.id.imagePageHomeImage);
 		if (testIcon) {
@@ -137,6 +166,7 @@ public class MyBookImagePage extends Activity {
 			}
 		});
 
+		
 		// manual
 		final ImageView manualImage = (ImageView)findViewById(R.id.imagePageManualImage);
 		if (testIcon) {
@@ -177,8 +207,52 @@ public class MyBookImagePage extends Activity {
 				}
 			}
 		});
-	}
+		
 
+		
+		
+	}
+    class MyGestureDetector extends SimpleOnGestureListener {
+        @Override
+        public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
+ 
+            DisplayMetrics dm = getResources().getDisplayMetrics();
+            REL_SWIPE_MIN_DISTANCE = (int)(SWIPE_MIN_DISTANCE * dm.densityDpi / 160.0f);
+            REL_SWIPE_MAX_OFF_PATH = (int)(SWIPE_MAX_OFF_PATH * dm.densityDpi / 160.0f);
+            REL_SWIPE_THRESHOLD_VELOCITY = (int)(SWIPE_THRESHOLD_VELOCITY * dm.densityDpi / 160.0f);    
+            
+            
+            try {
+                if (Math.abs(e1.getY() - e2.getY()) > SWIPE_MAX_OFF_PATH)
+                    return false;
+                // right to left swipe
+                if(e1.getX() - e2.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+//                    Toast.makeText(MyBookImagePage.this, "Left Swipe", Toast.LENGTH_SHORT).show();
+                    if (myCurrentPage < totalPageNum) {
+                        myCurrentPage++;
+                        drawMyCurrentImagePage();
+                    }
+                    else {
+                        Toast.makeText(MyBookImagePage.this, "This Page is Last !!", Toast.LENGTH_SHORT).show();
+                    }                   
+                    
+                }  else if (e2.getX() - e1.getX() > SWIPE_MIN_DISTANCE && Math.abs(velocityX) > SWIPE_THRESHOLD_VELOCITY) {
+//                    Toast.makeText(MyBookImagePage.this, "Right Swipe", Toast.LENGTH_SHORT).show();
+                    if (myCurrentPage > 0) {
+                        myCurrentPage--;
+                        drawMyCurrentImagePage();
+                    }
+                    else {
+                        finish();
+                    }
+                }
+            } catch (Exception e) {
+                // nothing
+            }
+            return false;
+        }
+    }
+    
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -199,20 +273,47 @@ public class MyBookImagePage extends Activity {
 
 	@Override
 	public boolean onTouchEvent(MotionEvent event) {
-		switch (event.getAction()) {
-		case MotionEvent.ACTION_DOWN:
-	        float pos_x = event.getX();
-	        float pos_y = event.getY();
-	        for (int soundID=1; soundID<=totalEffectNum; soundID++) {
-				Rect rect = myPreferences.getPageEffectPosition(myCurrentPage, soundID);
-				if (pos_x >= rect.left && pos_x <= rect.right && pos_y >= rect.top && pos_y <= rect.bottom) {
-					mySoundPool.play(soundID, 1f, 1f, 1, 0, 1f);
-					return true;
-				}
-			}
-			break;
-		}
-		return super.onTouchEvent(event);
+	    
+        if (gestureDetector.onTouchEvent(event)) {
+
+            return true;
+        } else {
+ 
+          switch (event.getAction()) {
+          case MotionEvent.ACTION_DOWN:
+              float pos_x = event.getX();
+              float pos_y = event.getY();
+              for (int soundID=1; soundID<=totalEffectNum; soundID++) {
+                  Rect rect = myPreferences.getPageEffectPosition(myCurrentPage, soundID);
+                  if (pos_x >= rect.left && pos_x <= rect.right && pos_y >= rect.top && pos_y <= rect.bottom) {
+                      mySoundPool.play(soundID, 1f, 1f, 1, 0, 1f);
+                      return true;
+                  }
+              }
+                initialX = event.getRawX();  
+                initialY = event.getRawY();  
+              break;
+        }
+    
+            return false;
+        }
+        
+//		switch (event.getAction()) {
+//		case MotionEvent.ACTION_DOWN:
+//	        float pos_x = event.getX();
+//	        float pos_y = event.getY();
+//	        for (int soundID=1; soundID<=totalEffectNum; soundID++) {
+//				Rect rect = myPreferences.getPageEffectPosition(myCurrentPage, soundID);
+//				if (pos_x >= rect.left && pos_x <= rect.right && pos_y >= rect.top && pos_y <= rect.bottom) {
+//					mySoundPool.play(soundID, 1f, 1f, 1, 0, 1f);
+//					return true;
+//				}
+//			}
+//            initialX = event.getRawX();  
+//            initialY = event.getRawY();  
+//			break;
+//		}
+//		return super.onTouchEvent(event);
 	}
 
 	private void drawMyCurrentImagePage() {
@@ -362,5 +463,11 @@ public class MyBookImagePage extends Activity {
 			}
 		}
 	}
+
+    @Override
+    public void onClick(View arg0) {
+        // TODO Auto-generated method stub
+        
+    }
 	
 }
